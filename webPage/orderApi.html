@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<!-- 标签显示的ico图标 -->
+		<link rel="shortcut icon" href="http://101.132.67.176:8080/images/23.gif" type="image/x-icon">
+		<!-- 标签显示的标题 -->
+		<title>Order</title>
+		<!-- vue开发环境版本，包含了有帮助的命令行警告 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<!-- 引入element-ui样式 -->
+		<link rel="stylesheet" href="index.css">
+		<!-- 引入element-ui组件库 -->
+		<script src="index.js"></script>
+		<!--Axios-->
+		<script src="axios.min.js"></script>
+		<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+
+	</head> 
+	<body>
+		<!-- 布局开始，最外边的盒子部分，固定大小自适应宽度 -->
+		<div id="app" class="flexBox">
+		<!-- 中间部分 -->
+		<div style="width: 50;border: 0.1em red solid;padding: 0.3em;">
+			<!-- 主输入框 -->
+			<input id="mainInput" v-if="inputTrue" v-model="mainInputValue" type="txxt"  style="border:red solid 0.1px;height: 1.3em;" />&ensp;&ensp;
+			<el-input v-if="textareaA" v-model="textareaI"  type="textarea" :rows="2" type="textarea"></el-input>
+			<!-- 激活按钮 -->
+			<button id="activeButton" @click="inputAlert()">Click</button>
+			<!-- 输入显示部分 -->
+			<p id="backLook"> {{message}} </p>
+			<!-- 快捷按钮部分 28个快捷选项 -->
+			<!-- 点击的时候，显示命令的详细内容 -->
+			<div v-if="buttonHide">
+				<button class="oneButton"  @click="orderStart('NanA1')">锁屏</button>
+				<button class="oneButton"  @click="orderStart('NanB1')">开启远程</button>
+				<button class="oneButton"  @click="orderStart('NanB2')">关闭远程</button>
+				<button class="oneButton"  @click="orderStart('NanC1')">系统关机</button>
+				<button class="oneButton"  @click="orderStart('NanD1')">系统重启</button>
+			</div>
+			<div v-if="buttonHide" style="margin-top:0.3em;">
+				<button class="twoButton"  @click="orderStart('NanD2')">电脑睡眠</button>
+				<button class="twoButton"  @click="orderStart('NanE1')">远程桌面</button>
+				<button class="twoButton"  @click="orderStart('NanF1')">邮件发送</button>
+				<button class="twoButton"  @click="orderStart('notepad')">记事本</button>
+				<button class="twoButton"  @click="orderStart('calc')">计算器</button>
+			</div>
+			<div v-if="buttonHide" style="margin-top:0.3em;">
+				<button class="threeButton" @click="orderStart('desk')">设置</button>
+				<button class="threeButton" @click="orderStart('sysdm')">系统属性</button>
+				<button class="threeButton" @click="orderStart('control')">控制面板</button>
+				<button class="threeButton" @click="orderStart('appwiz')">程序设置</button>
+				<button class="threeButton" @click="orderStart('eventvwr')">事件查看</button>
+			</div>
+			<div v-if="buttonHide" style="margin-top:0.3em;">
+				<button class="fourButton" @click="orderStart('taskschd')">任务程序</button>
+				<button class="fourButton" @click="orderStart('msinfo32')">系统信息</button>
+				<button class="fourButton" @click="orderStart('wf')">防火墙</button>
+				<button class="fourButton" @click="orderStart('firewall')">墙设置</button>
+				<button class="fourButton" @click="orderStart('secpol')">安全策略</button>
+			</div>
+			<div v-if="buttonHide" style="margin-top:0.3em;">
+				<button class="fiveButton" @click="orderStart('compmgmt')">电脑管理</button>
+				<button class="fiveButton" @click="orderStart('perfmon')">资源监视</button>
+				<button class="fiveButton" @click="orderStart('intcpl')">网络</button>
+				<button class="fiveButton" @click="orderStart('powercfg')">电源选项</button>
+				<button class="fiveButton" @click="orderStart('main')">鼠标配置</button>
+			</div>
+			<div v-if="buttonHide" style="margin-top:0.3em;">
+				<button class="sixButton" @click="orderStart('ncpa')">网络连接</button>
+				<button class="sixButton" @click="orderStart('die')">锁屏</button>
+				<button class="sixButton" @click="orderStart('Click')">Click</button>
+				<button class="sixButton" @click="orderStart('Click')">Click</button>
+				<button class="sixButton" @click="orderStart('Click')">Click</button>
+			</div>
+		</div> 
+		</div>
+		
+	</body>
+</html>
+
+<!-- 页内脚本部分 -->
+<script type="text/javascript">
+    console.log(
+        "__      __   _                    __  __       " +
+		"\n     / /__| |__ ___ _ __  ___  |  /  |_  _  " +
+		"\n   // / -_) / _/ _  '  / -_) | |/| | || | " +
+		"\n   _/_/___|______/_|_|____| |_|  |_|_, | " +
+		"\n                                          |__/  ");
+
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            //初始化消息
+            message: 'Hai Boy!',
+			//隐藏显示按钮
+			buttonHide:false,
+			//输入值
+            mainInputValue:"",
+			//文本域显示状态
+            textareaA:false,
+			//文本域内容
+            textareaI:"A",
+			//输入框显示状态
+            inputTrue:true,
+        },
+		created(){
+			this.getlist();
+		},
+		methods:{
+			//初始化
+			getlist(){ 
+				    //设置回显的值 
+					axios.get('http://192.168.1.201:8080/order/sys/order/getOrder')
+				       .then(function (response) {   
+					   if(response.data.length>0){
+						   document.getElementById("backLook").innerHTML=response.data; 
+					   }else{ 
+					   this.message="Get Fail";  
+					   }
+						  })  
+			},
+            //写入命令
+            orderStart(order){
+                if(order=="Click"){
+                    this.$message({
+                        type: 'success',
+                        message: '还未开发，别乱点!'
+                    });
+				}
+                document.getElementById("backLook").innerHTML=order;
+                axios.get('http://192.168.1.201:8080/order/sys/order/updateOrder'
+                    ,{params:{
+                            "order":order
+                        }})
+						 .then(function (response) {   
+							if(response.data){
+							 document.getElementById("backLook").innerHTML="Update Success";
+						}else{
+							 document.getElementById("backLook").innerHTML="Update Fail";
+						}  
+						 }  
+						 )
+			},
+            inputAlert(){
+			//获取时间
+			let d = new Date();
+			// document.getElementById("backLook").innerHTML = d.getDate()+""+d.getHours()+""+d.getMinutes();
+			if(this.mainInputValue == d.getDate()+""+d.getHours()+""+d.getMinutes()){
+			    this.buttonHide = true;
+			}
+			//输入框状态
+			if(this.mainInputValue == "hide"){
+				this.buttonHide = false;
+			}
+			//输入框的值
+			if(this.mainInputValue.substr(0,1)=="n"){
+				this.orderStart(this.mainInputValue.substr(1));
+			}
+			//判断文本域内容
+			if(this.textareaI!="A"){
+                document.getElementById("backLook").innerHTML=this.textareaI;
+                this.orderStart(this.textareaI);
+			}
+			//判断是否激活文本域
+			if(this.mainInputValue=="text"){
+                this.textareaA=true;
+                this.inputTrue=false;
+			}
+			
+
+			}
+		}
+    })
+</script> 
+<!-- 页内css部分 -->
+<style type="text/css"> 
+	 /*外部box样式*/
+	.flexBox{
+		display: flex;
+		flex-direction:row;
+        margin: 0 auto;
+		justify-content:center;
+	}
+	/* 按钮样式部分 */
+	.oneButton{
+		color:red;
+		border: 0.1em solid red;
+		background-color: transparent;
+	}
+	.twoButton{
+		color:red;
+		border: 0.1em solid red;
+		background-color: transparent;
+	}
+	.threeButton{
+		color:red;
+		border: 0.1em solid red;
+		background-color: transparent;
+	}
+	.fourButton{
+		color:red;
+		border: 0.1em solid red;
+		background-color: transparent;
+	}
+	.fiveButton{
+		color:red;
+		border: 0.1em solid red;
+		background-color: transparent;
+	}
+	.sixButton{
+		color:red;
+		border: 0.1em solid red;
+		background-color: transparent;
+	}
+	/* 输出的文本标签显示部分 */
+	#backLook{
+		display: flex;
+		height: 1.2em;
+		margin: 0;
+	}
+	/* 按钮部分样式 */
+	#activeButton{
+         color:red;
+		 border: 0.1em solid red;
+		 background-color: transparent;
+		 width: 100px;
+		 margin-left: 40px;
+		 }
+</style>
